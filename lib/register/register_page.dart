@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:social_media_app/customs/constant.dart';
-import 'package:social_media_app/register/register_page.dart';
+import 'package:social_media_app/login/loginpage.dart';
 
-class Loginpage extends StatelessWidget {
-  const Loginpage({super.key});
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +24,14 @@ class Loginpage extends StatelessWidget {
               ),
               TextFormField(
                 decoration: InputDecoration(
+                  hintText: "Email",
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              TextFormField(
+                decoration: InputDecoration(
                   hintText: "Username",
                 ),
               ),
@@ -41,15 +49,15 @@ class Loginpage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Dont have an account ?"),
+                  Text("already have an account"),
                   TextButton(
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => RegisterPage(),
+                        builder: (_) => Loginpage(),
                       ),
                     ),
-                    child: Text("Sign up"),
+                    child: Text("Sign in"),
                   ),
                 ],
               ),
