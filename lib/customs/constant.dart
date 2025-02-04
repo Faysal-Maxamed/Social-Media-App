@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const Color btnclr = Color(0xff5E35B1);
+const String endpoint = "http://192.168.18.8:5000/api/";
 const gradient = LinearGradient(
   begin: Alignment.topLeft,
   colors: [
