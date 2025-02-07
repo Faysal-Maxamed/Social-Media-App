@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_media_app/customs/constant.dart';
 import 'package:social_media_app/login/login_provider.dart';
-import 'package:social_media_app/posts/post_page.dart';
+import 'package:social_media_app/posts/post_card.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: btnclr,
-          title: Text("Social Media App"),
+          title: Text("Social Media Ap"),
           foregroundColor: Colors.white,
         ),
         body: Padding(
