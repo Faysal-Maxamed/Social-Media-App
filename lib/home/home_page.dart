@@ -1,15 +1,30 @@
+import 'dart:async';
+
+import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_media_app/customs/constant.dart';
 import 'package:social_media_app/login/login_provider.dart';
 import 'package:social_media_app/posts/post_card.dart';
+import 'package:social_media_app/posts/post_provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with AfterLayoutMixin {
+  @override
+  FutureOr<void> afterFirstLayout(BuildContext context) {
+    context.read<PostProvider>().fetchposts();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer<LoginProvider>(builder: (context, login, _) {
+    return Consumer2<LoginProvider, PostProvider>(
+        builder: (context, login, post, _) {
       return Scaffold(
         appBar: AppBar(
           backgroundColor: btnclr,
@@ -41,7 +56,18 @@ class HomePage extends StatelessWidget {
                   )
                 ],
               ),
-              PostPage()
+              post.posts.isEmpty
+                  ? Center(child: CircularProgressIndicator())
+                  : Expanded(
+                      child: post.posts.isEmpty
+                          ? Center(child: Text("No posts available"))
+                          : ListView.builder(
+                              itemCount: post.posts.length,
+                              itemBuilder: (context, index) {
+                                return PostPage(post: post.posts[index]);
+                              },
+                            ),
+                    ),
             ],
           ),
         ),
