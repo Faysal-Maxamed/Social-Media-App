@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:social_media_app/comments/comments_page.dart';
 import 'package:social_media_app/customs/constant.dart';
 import 'package:social_media_app/login/login_provider.dart';
+import 'package:social_media_app/posts/create_post.dart';
 import 'package:social_media_app/posts/post_model.dart';
 import 'package:social_media_app/posts/post_provider.dart';
 
@@ -40,26 +41,34 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundImage: NetworkImage(login.user!.image),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CreatePost(),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "what is your mine?",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundImage: NetworkImage(login.user!.image),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: "what is your mine?",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
               Expanded(
                 child: ListView.builder(
