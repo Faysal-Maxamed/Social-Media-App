@@ -60,7 +60,7 @@ class LoginProvider extends ChangeNotifier {
 
   saveuser(LoginModel user) {
     box.write(userInfo, user.toJson());
-    box.write(isllogedin, "userInfo");
+    box.write(isllogedin, "isllogedin");
   }
 
   getuser() {

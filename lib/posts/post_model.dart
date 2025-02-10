@@ -1,6 +1,5 @@
 class PostModel {
   String? sId;
-  String? userId;
   String? body;
   List<String>? images;
   String? name;
@@ -12,7 +11,6 @@ class PostModel {
 
   PostModel(
       {this.sId,
-      this.userId,
       this.body,
       this.images,
       this.name,
@@ -24,7 +22,6 @@ class PostModel {
 
   PostModel.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
-    userId = json['userId'];
     body = json['body'];
     images = json['images'].cast<String>();
     name = json['name'];
@@ -48,7 +45,6 @@ class PostModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['_id'] = this.sId;
-    data['userId'] = this.userId;
     data['body'] = this.body;
     data['images'] = this.images;
     data['name'] = this.name;
@@ -96,16 +92,14 @@ class Likes {
 class Comments {
   String? text;
   String? name;
-  String? photo;
   String? sId;
   String? createdDate;
 
-  Comments({this.text, this.name, this.photo, this.sId, this.createdDate});
+  Comments({this.text, this.name, this.sId, this.createdDate});
 
   Comments.fromJson(Map<String, dynamic> json) {
     text = json['text'];
     name = json['name'];
-    photo = json['photo'];
     sId = json['_id'];
     createdDate = json['createdDate'];
   }
@@ -114,7 +108,6 @@ class Comments {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['text'] = this.text;
     data['name'] = this.name;
-    data['photo'] = this.photo;
     data['_id'] = this.sId;
     data['createdDate'] = this.createdDate;
     return data;
