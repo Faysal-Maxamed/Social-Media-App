@@ -1,14 +1,12 @@
 import 'dart:async';
-
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:social_media_app/comments/comments_page.dart';
-import 'package:social_media_app/customs/constant.dart';
+import 'package:social_media_app/like_section/like_provider.dart';
 import 'package:social_media_app/login/login_provider.dart';
 import 'package:social_media_app/posts/create_post.dart';
-import 'package:social_media_app/posts/post_model.dart';
 import 'package:social_media_app/posts/post_provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,150 +24,170 @@ class _HomePageState extends State<HomePage> with AfterLayoutMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<LoginProvider, PostProvider>(
-        builder: (context, login, post, _) {
-      return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.cyan,
-          centerTitle: true,
-          title: Text("Social Media"),
-          shadowColor: Colors.cyan,
-          elevation: 10,
-          foregroundColor: Colors.white,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CreatePost(),
-                  ),
+    return Consumer3<LoginProvider, PostProvider, LikeProvider>(
+      builder: (context, login, post, Like, _) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text(
+              "Social Media",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            ),
+            centerTitle: true,
+            flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.cyan, Colors.blueAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                child: Row(
+              ),
+            ),
+            elevation: 6,
+            shadowColor: Colors.cyan.shade200,
+            foregroundColor: Colors.white,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Column(
+              children: [
+                // User Info Row
+                Row(
                   children: [
                     CircleAvatar(
                       radius: 30,
                       backgroundImage: NetworkImage(login.user!.image),
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: "what is your mine?",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
+                    const SizedBox(width: 10),
+                    Text(
+                      login.user!.username,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                       ),
-                    )
+                    ),
                   ],
                 ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: post.lisofposts.length,
-                  itemBuilder: (_, index) {
-                    var time = Jiffy.parseFromDateTime(
-                            DateTime.parse(post.lisofposts[index].createdDate!))
-                        .fromNow();
+                const SizedBox(height: 12),
 
-                    return Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 5,
-                            offset: Offset(2, 6),
-                            color: Colors.grey.shade300,
-                          )
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: CircleAvatar(
-                                radius: 30,
-                                backgroundImage: AssetImage("images/1.png"),
+                // Posts List
+                Expanded(
+                  child: post.isloading
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.builder(
+                          itemCount: post.lisofposts.length,
+                          itemBuilder: (_, index) {
+                            var postItem = post.lisofposts[index];
+                            var time = Jiffy.parseFromDateTime(
+                                    DateTime.parse(postItem.createdDate!))
+                                .fromNow();
+
+                            return Card(
+                              elevation: 4,
+                              margin: const EdgeInsets.only(bottom: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
                               ),
-                              title: Text(post.lisofposts[index].name!),
-                              subtitle: Text(time),
-                              trailing: Icon(Icons.more_vert),
-                            ),
-                            Text(post.lisofposts[index].body!),
-                            Visibility(
-                              child: Center(
-                                child: Container(
-                                  child: Image.asset(
-                                    "images/1.png",
-                                    height: 200,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.thumb_up,
-                                  color: Colors.blue,
-                                ),
-                                SizedBox(
-                                  width: 7,
-                                ),
-                                Text("Like"),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                GestureDetector(
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => CommentsPage(
-                                        post: post.lisofposts[index],
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Post Header
+                                    ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: CircleAvatar(
+                                        backgroundImage:
+                                            NetworkImage(login.user!.image),
+                                        radius: 25,
+                                      ),
+                                      title: Text(
+                                        postItem.name!,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        time,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      ),
+                                      trailing: const Icon(Icons.more_vert),
+                                    ),
+
+                                    // Post Body
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 8.0),
+                                      child: Text(
+                                        postItem.body!,
+                                        style: const TextStyle(fontSize: 14),
                                       ),
                                     ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.comment,
-                                        color: Colors.blue,
-                                      ),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text("comment"),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            )
-                          ],
+
+                                    // Like & Comment Row
+                                    Row(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            Like.addLike(
+                                              post.lisofposts[index].sId!,
+                                              login.user!.username,
+                                            );
+                                          },
+                                          child: Row(
+                                            children: const [
+                                              Icon(Icons.thumb_up,
+                                                  color: Colors.blue),
+                                              SizedBox(width: 5),
+                                              Text("Like"),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 20),
+                                        GestureDetector(
+                                          onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => CommentsPage(
+                                                  post: post.lisofposts[index]),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: const [
+                                              Icon(Icons.comment,
+                                                  color: Colors.blue),
+                                              SizedBox(width: 5),
+                                              Text("Comment"),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      ),
-                    );
-                  },
                 ),
-              )
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    });
+
+          // Add Post Floating Button
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const CreatePost()),
+            ),
+            backgroundColor: Colors.cyan,
+            child: const Icon(Icons.add, color: Colors.white),
+          ),
+        );
+      },
+    );
   }
 }

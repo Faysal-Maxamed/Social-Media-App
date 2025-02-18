@@ -5,6 +5,7 @@ import 'package:social_media_app/comments/comment_provider.dart';
 import 'package:social_media_app/customs/constant.dart';
 import 'package:social_media_app/customs/onboarding_page.dart';
 import 'package:social_media_app/home/home_page.dart';
+import 'package:social_media_app/like_section/like_provider.dart';
 import 'package:social_media_app/login/login_provider.dart';
 import 'package:social_media_app/posts/post_provider.dart';
 import 'package:social_media_app/register/register_provider.dart';
@@ -15,6 +16,7 @@ void main() async {
   bool hasdate = box.hasData(isllogedin);
   runApp(MultiProvider(
     providers: [
+      ChangeNotifierProvider(create: (_)=>LikeProvider()),
       ChangeNotifierProvider(create: (_) => RegisterProvider()),
       ChangeNotifierProvider(create: (_) => LoginProvider()),
       ChangeNotifierProvider(create: (_)=>PostProvider()),

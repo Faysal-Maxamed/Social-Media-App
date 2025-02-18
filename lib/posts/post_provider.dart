@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:social_media_app/customs/constant.dart';
 import 'package:social_media_app/login/login_provider.dart';
@@ -8,29 +8,42 @@ import 'package:http/http.dart' as http;
 
 class PostProvider extends ChangeNotifier {
   List<PostModel> lisofposts = [];
-
+  bool isloading = false;
+  File? _image;
   String? _bodytext;
   String get bodyText => _bodytext!;
+  File get image => _image!;
   LoginProvider login = LoginProvider();
+  getbodttext(String bodytext) {
+    _bodytext = bodytext;
+    notifyListeners();
+  }
 
   fetchposts() async {
-    var response = await http.get(Uri.parse(endpoint + "post"));
-    if (response.statusCode == 200) {
-      print(response.body);
-      List decodedate = jsonDecode(response.body);
-      lisofposts = decodedate.map((e) => PostModel.fromJson(e)).toList();
-      notifyListeners();
-    } else {
-      print(response.body);
+    isloading = true;
+    notifyListeners();
+    try {
+      var response = await http.get(Uri.parse(endpoint + "post"));
+      if (response.statusCode == 200) {
+        print(response.body);
+        List decodedate = jsonDecode(response.body);
+        lisofposts = decodedate.map((e) => PostModel.fromJson(e)).toList();
+        notifyListeners();
+      } else {
+        print(response.body);
+      }
+    } catch (e) {
+      print(e);
     }
-    return lisofposts;
+    isloading = false;
+    notifyListeners();
   }
 
   addpost(BuildContext context) async {
     await login.getuser();
     var date = <String, dynamic>{
       "body": bodyText,
-      "name": login.user!.id,
+      "name": login.user!.username,
     };
 
     var response = await http.post(
@@ -38,7 +51,9 @@ class PostProvider extends ChangeNotifier {
       body: jsonEncode(date),
       headers: {"Content-Type": "application/json"},
     );
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
+      fetchposts();
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Post created succsess"),

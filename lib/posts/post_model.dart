@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class PostModel {
   String? sId;
   String? body;
